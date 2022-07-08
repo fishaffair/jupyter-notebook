@@ -33,23 +33,15 @@ jobs:
         run: pip install -r requirements.txt
       
       - name: Exeute Notebook
-        run: jupyter-execute /kaggle/titanic.ipynb
+        run: jupyter-execute titanic.ipynb
         
-      - name: Upload kernel
-        uses: harupy/push-kaggle-kernel@master
-        env:
-          # Do not leak your credentials.
-            KAGGLE_USERNAME: ${{ secrets.KAGGLE_USERNAME }}
-            KAGGLE_KEY: ${{ secrets.KAGGLE_KEY }}
-        with:
-            id: ${{ secrets.KAGGLE_USERNAME }}/${{ github.sha }}
-            title: ${{ github.sha }}
-            code_file: ./script.py
-            language: python
-            kernel_type: script
-          # Do not share high-scoring kernels.
-            is_private: false
-            competition_sources: titanic
+      - name: Login to Kaggle
+        run: |
+              echo "KAGGLE_USERNAME=${{ secrets.KAGGLE_USERNAME }}" >> $GITHUB_ENV
+              echo "KAGGLE_KEY=${{ secrets.KAGGLE_KEY }}" >> $GITHUB_ENV
+
+      - name: Submit Predictions to Kaggle
+        run: kaggle competitions submit -c titanic -f ./kaggle/submission.csv -m "Submition from GitHub"
           
       - name: Upload a Build Artifact
         uses: actions/upload-artifact@v3.1.0

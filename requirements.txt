@@ -3,4 +3,6 @@ pandas
 seaborn
 matplotlib
 sklearn
+install
 jupyterlab
+kaggle
